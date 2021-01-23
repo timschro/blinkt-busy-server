@@ -9,7 +9,7 @@ import colorsys
 from time import sleep
 from datetime import datetime
 from gpiozero import CPUTemperature
-from lib.unicorn_wrapper import UnicornWrapper
+from lib.blinkt_wrapper import BlinktWrapper
 from flask import Flask, jsonify, make_response, request, send_from_directory
 from flask_cors import CORS
 from random import randint
@@ -26,11 +26,11 @@ globalLastCalledApi = None
 globalStatus = None
 globalStatusOverwrite = False
 
-# Initialize the Unicorn hat
-unicorn = UnicornWrapper()
+# Initialize the Blinkt hat
+blinkt = BlinktWrapper()
 
 # get the width and height of the hardware and set it to portrait if its not
-width, height = unicorn.getShape()
+width, height = blinkt.getShape()
 
 
 class MyFlaskApp(Flask):
@@ -48,17 +48,17 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 def setColor(r, g, b, brightness=0.5, speed=None):
 	global crntColors
 	setPixels(r, g, b, brightness)
-	unicorn.show()
+	blinkt.show()
 
 	if speed is not None and speed != '':
 		crntT = threading.currentThread()
-		unicorn.clear()
+		blinkt.clear()
 		while getattr(crntT, "do_run", True):
 			setPixels(r, g, b, brightness)
-			unicorn.show()
+			blinkt.show()
 			sleep(speed)
-			unicorn.clear()
-			unicorn.show()
+			blinkt.clear()
+			blinkt.show()
 			sleep(speed)
 
 
@@ -71,13 +71,13 @@ def setPixels(r, g, b, brightness=0.5):
 
 	if brightness is not None:
 		globalBrightness = brightness
-		unicorn.setBrightness(brightness)
+		blinkt.setBrightness(brightness)
 
-	unicorn.setColour(r, g, b)
+	blinkt.setColour(r, g, b)
 
 
 def switchOn():
-	rgb = unicorn.hsvIntToRGB(randint(0, 360), 100, 100)
+	rgb = blinkt.hsvIntToRGB(randint(0, 360), 100, 100)
 	blinkThread = threading.Thread(target=setColor, args=(rgb[0], rgb[1], rgb[2]))
 	blinkThread.do_run = True
 	blinkThread.start()
@@ -90,15 +90,15 @@ def switchOff():
 	globalBlue = 0
 	if blinkThread is not None:
 		blinkThread.do_run = False
-	unicorn.clear()
-	unicorn.off()
+	blinkt.clear()
+	blinkt.off()
 
 
 def halfBlink():
-	unicorn.show()
+	blinkt.show()
 	sleep(0.8)
-	unicorn.clear()
-	unicorn.show()
+	blinkt.clear()
+	blinkt.show()
 	sleep(0.2)
 
 
@@ -110,10 +110,10 @@ def countDown(time):
 		for x in range(4):
 			b = b - x
 			setPixels(255, 255, 0, b)
-			unicorn.show()
+			blinkt.show()
 			sleep(0.5)
-			unicorn.clear()
-		unicorn.show()
+			blinkt.clear()
+		blinkt.show()
 		sleep(2)
 		showTime = showTime - 2
 	for i in range(10):
@@ -121,8 +121,8 @@ def countDown(time):
 		halfBlink()
 	setColor(255, 0, 0, 0.5)
 	halfBlink()
-	unicorn.clear()
-	unicorn.off()
+	blinkt.clear()
+	blinkt.off()
 
 
 def displayRainbow(brightness, speed, run=None):
@@ -136,7 +136,7 @@ def displayRainbow(brightness, speed, run=None):
 	offset = 30
 	while getattr(crntT, "do_run", True):
 		i = i + 0.3
-		unicorn.setBrightness(brightness)
+		blinkt.setBrightness(brightness)
 		for x in range(0, width):
 			for y in range(0, height):
 				r = 0  # x * 32
@@ -148,9 +148,9 @@ def displayRainbow(brightness, speed, run=None):
 				r = max(0, min(255, r + offset))
 				g = max(0, min(255, g + offset))
 				b = max(0, min(255, b + offset))
-				unicorn.setPixel(x, y, int(r), int(g), int(b))
+				blinkt.setPixel(x, y, int(r), int(g), int(b))
 
-		unicorn.show()
+		blinkt.show()
 		sleep(speed)
 
 
@@ -192,7 +192,7 @@ def apiOff():
 
 @app.route('/api/switch', methods=['POST'])
 def apiSwitch():
-	global blinkThread, globalStatusOverwrite, globalStatus, globalLastCalledApi
+	global blinkthread, globalStatusOverwrite, globalStatus, globalLastCalledApi
 
 	if globalStatusOverwrite:
 		return make_response(jsonify({}))
@@ -289,7 +289,7 @@ def apiDisplayRainbow():
 @app.route('/api/status', methods=['GET'])
 def apiStatus():
 	global globalStatusOverwrite, globalStatus, globalBlue, globalGreen, globalRed, globalBrightness, \
-		globalLastCalled, globalLastCalledApi, width, height, unicorn
+		globalLastCalled, globalLastCalledApi, width, height, blinkt
 
 	cpu = CPUTemperature()
 	return jsonify({
@@ -302,7 +302,7 @@ def apiStatus():
 		'lastCalledApi': globalLastCalledApi, 
 		'height': height,
 		'width': width,
-		'unicorn': unicorn.getType(),
+		'blinkt': blinkt.getType(),
 		'status': globalStatus,
 		'statusOverwritten': globalStatusOverwrite
 	})

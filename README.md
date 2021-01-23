@@ -1,28 +1,28 @@
-# Simple server for Raspberry Pi with Pimoroni Unicorn hat
+# Simple server for Raspberry Pi with Pimoroni Blinkt 
 
 * [Introduction](#Introduction)
 * [Installation](#Installation)
 * [Usage](#Usage)
-    * [Set the unicorn to On](#on)
-    * [Set the unicorn to Off](#off)
+    * [Set the Blinkt to On](#on)
+    * [Set the Blinkt to Off](#off)
     * [Get the server Status](#status)
-    * [Set unicorn to show a Rainbow](#rainbow)
-    * [Set unicorn to a colour using RGB](#rgb)
-    * [Set unicorn to available](#available)
-    * [Set unicorn to busy](#busy)
-    * [Set unicorn to away](#away)
+    * [Set Blinkt to show a Rainbow](#rainbow)
+    * [Set Blinkt to a colour using RGB](#rgb)
+    * [Set Blinkt to available](#available)
+    * [Set Blinkt to busy](#busy)
+    * [Set Blinkt to away](#away)
     * [Reset the overwritten status](#reset)
 * [Todo](#Todo)
 * [License](#License)
 
 # Introduction
 
-This is a project to create a busy light from both the Pimoroni [Unicorn Phat](https://shop.pimoroni.com/products/unicorn-phat) and [Unicorn Mini](https://shop.pimoroni.com/products/unicorn-hat-mini).
+This is a project to create a busy light from both the Pimoroni [Blinkt](https://shop.pimoroni.com/products/blinkt) based on https://github.com/estruyf/unicorn-busy-server
 
 The service itself has the following features:
 
 * Installation script to simplify the process
-* APIs for turning the Unicorn on/off
+* APIs for turning the Blinkt on/off
 * APIs for changing the colors
 * Rainbow effect
 * Front-end to show the current status and manually set its status
@@ -34,16 +34,16 @@ In order to install this on your Raspberry Pi, you can follow the next steps:
 Copy and paste the following in to a terminal. It will install all the required files, enable, and start the service.  If you are running Raspbian or Ubuntu, you can use the following installation command:
 
 ```bash
-curl -LSs https://raw.githubusercontent.com/estruyf/unicorn-busy-server/master/install.sh | sudo bash -
+curl -LSs https://raw.githubusercontent.com/timschro/blinkt-busy-server/master/install.sh | sudo bash -
 ```
 
 If there might be a trust issue while running the command, you could try the following:
 
 ```bash
 cd /tmp
-curl -LSs https://raw.githubusercontent.com/estruyf/unicorn-busy-server/master/install.sh
+curl -LSs https://raw.githubusercontent.com/timschro/blinkt-busy-server/master/install.sh
 cat install | more # So you can see the contents of the script a page at time
-sudo bash ./install.sh -V -i /home/pi/unicorn-busy-server
+sudo bash ./install.sh -V -i /home/pi/blinkt-busy-server
 ```
 
 > **Important**: Currently the script only runs on Raspbian/Ubuntu. Feel free to submit a pull request to extend the PR to support other distributions. Or you can make use of the old installation script: `install-fallback.sh`.
@@ -51,7 +51,7 @@ sudo bash ./install.sh -V -i /home/pi/unicorn-busy-server
 If you want to clone/fork this repo and carry on development on a more sensible machine, you can install the required files without needing to install the service by doing the following:
 
 ```bash
-curl -LSs https://raw.githubusercontent.com/estruyf/unicorn-busy-server/master/install.sh
+curl -LSs https://raw.githubusercontent.com/timschro/blinkt-busy-server/master/install.sh
 bash ./install.sh -d
 ```
 
@@ -72,7 +72,7 @@ Usage:
 
 # Usage
 
-If you've run the install script (without the -d option) check the Unicorn hat attache to your Pi.  If all has gone according to plan the unicorn hat will be changing colours.  Once its going through all 360 Hues within the HSV spectrum it'll go blank.  As soon as the Uniron hat lights up the `Busylight Server` is ready to start receiving commands.
+If you've run the install script (without the -d option) check the Blinkt hat attache to your Pi.  If all has gone according to plan the unicorn hat will be changing colours.  Once its going through all 360 Hues within the HSV spectrum it'll go blank.  As soon as the Uniron hat lights up the `Busylight Server` is ready to start receiving commands.
 
 The front-end is available via `http://<your-ip>:5000/`.
 

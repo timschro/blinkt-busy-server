@@ -25,17 +25,17 @@ usage() {
 }
 
 version() {
-    echo -e "${BOLD}Unicorn Busy Server installation script 0.5${NORMAL}"
+    echo -e "${BOLD}Blinkt Busy Server installation script 0.5${NORMAL}"
     echo -e "(c) Jamie Maynard 2020"
 }
 
 installSystemdService() {
     show_msg "${GREEN}Installing Systemd Service...${NORMAL}"
-    sed -i "s+WorkingDirectory=/home/pi/unicorn-busy-server+WorkingDirectory=$INSTALL_DIR+g" $INSTALL_DIR/busylight.service
+    sed -i "s+WorkingDirectory=/home/pi/blinkt-busy-server+WorkingDirectory=$INSTALL_DIR+g" $INSTALL_DIR/busylight.service
     if [[ ! -f /etc/systemd/system/busylight.service ]]; then
         sudo cp busylight.service /etc/systemd/system/busylight.service
     else
-        sudo sed -i "s+WorkingDirectory=/home/pi/unicorn-busy-server+WorkingDirectory=$INSTALL_DIR+g" /etc/systemd/system/busylight.service
+        sudo sed -i "s+WorkingDirectory=/home/pi/blinkt-busy-server+WorkingDirectory=$INSTALL_DIR+g" /etc/systemd/system/busylight.service
     fi
 }
 
@@ -77,7 +77,7 @@ if [ $VERBOSE == "false" ]; then
 fi
 
 # Check if we have the required files or if we need to clone them
-FILES=("server.py" "requirements.txt" "start.sh" "busylight.service" "lib/__init__.py" "lib/unicorn_wrapper.py")
+FILES=("server.py" "requirements.txt" "start.sh" "busylight.service" "lib/__init__.py" "lib/blinkt_wrapper.py")
 FILECHECK=true
 for FILE in ${FILES[@]}; do
     if [ $INSTALL_DIR != $SCRIPTPATH ]; then
@@ -108,10 +108,10 @@ if [ $FILECHECK == 'false' ]; then
         exit 1
     fi
     if [ "$(ls -A ${INSTALL_DIR})" ]; then
-        INSTALL_DIR="$INSTALL_DIR/unicorn-busy-server"
+        INSTALL_DIR="$INSTALL_DIR/blinkt-busy-server"
     fi
     show_msg "${GREEN}Cloning files from git using HTTPS to ${BOLD}${INSTALL_DIR}${NORMAL}${GREEN}...${NORMAL}"
-    git clone -q https://github.com/estruyf/unicorn-busy-server.git $INSTALL_DIR
+    git clone -q https://github.com/estruyf/blinkt-busy-server.git $INSTALL_DIR
     chown -R $SUDO_USER:$SUDO_USER $INSTALL_DIR
     cd $INSTALL_DIR
 fi
