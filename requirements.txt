@@ -1,5 +1,4 @@
-unicornhat
-unicornhatmini
+blinkt
 flask
 flask_cors
 gpiozero
